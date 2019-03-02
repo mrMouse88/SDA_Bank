@@ -3,12 +3,22 @@ package org;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class Account {
     private BigDecimal balance;
 
+    //map containing quantity of ech nominal, will be updated during deposit and withdraw
+    private Map<BigDecimal, Integer> nominalsQuantity = new LinkedHashMap<>();
+
     public Account(BigDecimal balance) {
         this.balance = balance;
+
+        //initializing map with nominals quantity
+        for (BigDecimal nominal : NOMINALS) {
+            nominalsQuantity.put(nominal, 0);
+        }
     }
 
     private static final BigDecimal[] NOMINALS = {
@@ -29,12 +39,34 @@ public class Account {
             BigDecimal.valueOf(0.01)
     };
 
-    public BigDecimal getBalance() {
+    //show quantity of certain nominal
+    private Integer getNominalsQuantity(BigDecimal nominal){
+        return nominalsQuantity.get(nominal);
+    }
+
+    //update quantity of certain nominal, when subtracting Integer will be negative
+    private void setNominalsQuantity(BigDecimal nominal, Integer quantity){
+        nominalsQuantity.put(nominal, nominalsQuantity.get(nominal)+quantity);
+    }
+
+    protected BigDecimal getBalance() {
         return balance;
+    }
+
+    protected void getAllNominalsQuantity(){
+        System.out.println("Available nominal:");
+        for (Map.Entry<BigDecimal, Integer> entry :nominalsQuantity.entrySet()){
+            StringBuilder msg = new StringBuilder();
+            msg.append(entry.getValue());
+            msg.append(" x ");
+            msg.append(entry.getKey());
+            System.out.println(msg);
+        }
     }
 
     protected void deposit(BigDecimal nominal, int quantity) {
         balance = balance.add(nominal.multiply(BigDecimal.valueOf((double) quantity)));
+        setNominalsQuantity(nominal, quantity);
     }
 
     protected void withdraw(BigDecimal amount) {
@@ -58,13 +90,10 @@ public class Account {
     private static String value(BigDecimal value) {
         String ret = "Amount " + value + "\n";
         for (BigDecimal nominal : NOMINALS) {
-            if (value.compareTo(nominal) == 1) {
+            if (value.compareTo(nominal) >= 0) {
                 BigDecimal a = value.divide(nominal, 0, RoundingMode.FLOOR);
                 value = value.subtract(nominal.multiply(a));
                 ret += "" + a + " x " + nominal + "\n";
-            } else if (value.compareTo(nominal) == 0) {
-                value = value.subtract(nominal);
-                ret += "" + 1 + " x " + nominal + "\n";
             }
         }
         return ret;

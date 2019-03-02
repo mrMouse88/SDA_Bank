@@ -11,11 +11,16 @@ public class Main {
         while (status) {
             printMenu();
             int menuPos = input.nextInt();
+
+
             switch (menuPos) {
                 case 1:
                     System.out.println("You have: " + user.getBalance());
                     break;
                 case 2:
+                    user.getAllNominalsQuantity();
+                    break;
+                case 3:
                     boolean innerStatus = false;
                     BigDecimal nominal = BigDecimal.valueOf(0.0);
                     while (!innerStatus) {
@@ -29,12 +34,12 @@ public class Main {
                     int quantity = input.nextInt();
                     user.deposit(nominal, quantity);
                     break;
-                case 3:
+                case 4:
                     System.out.println("input amount:");
                     BigDecimal amount = BigDecimal.valueOf(input.nextDouble());
                     user.withdraw(amount);
                     break;
-                case 4:
+                case 5:
                     System.out.println("Farewell!");
                     status = false;
                     break;
@@ -49,9 +54,10 @@ public class Main {
         System.out.println("-------------------------------");
         System.out.println("* * * Menu * * *");
         System.out.println(1 + ". Show balance");
-        System.out.println(2 + ". Deposit");
-        System.out.println(3 + ". Withdraw");
-        System.out.println(4 + ". Exit");
+        System.out.println(2 + ". Show nominals");
+        System.out.println(3 + ". Deposit");
+        System.out.println(4 + ". Withdraw");
+        System.out.println(5 + ". Exit");
         System.out.println("Choose wisely:");
     }
 }
